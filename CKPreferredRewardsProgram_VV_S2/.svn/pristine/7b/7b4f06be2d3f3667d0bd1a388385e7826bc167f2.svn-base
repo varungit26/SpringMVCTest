@@ -1,0 +1,37 @@
+package com.ck.rewards.service;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ck.rewards.dao.LoginDAOImpl;
+import com.ck.rewards.entity.User;
+
+/**
+ * Login Service Implementation class
+ *
+ */
+@Service
+public class LoginServiceImpl implements LoginService {
+
+	@Autowired
+	LoginDAOImpl LoginDAOImpl;
+
+	final static Logger logger = Logger.getLogger(LoginServiceImpl.class);
+
+	@Override
+	public boolean verifyUser(User user) {
+
+		boolean isValidUser = true;
+
+		try {
+			isValidUser = LoginDAOImpl.verifyUser(user);
+			logger.info("verifyUser: " + isValidUser);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return isValidUser;
+	}
+
+}

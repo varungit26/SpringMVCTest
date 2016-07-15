@@ -1,0 +1,100 @@
+package com.ck.rewards.dao;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.ck.rewards.entity.Address;
+import com.ck.rewards.entity.Profile;
+import com.ck.rewards.entity.Store;
+import com.ck.rewards.entity.User;
+
+/**
+ * Registration DAO to verify login details.
+ *
+ */
+
+@Repository
+public class RegisterDAO {
+
+	/*
+	 * @PersistenceContext private EntityManager em;
+	 */
+
+	@Autowired
+	private SessionFactory sessionFactory;
+	final static Logger logger = Logger.getLogger(RegisterDAO.class);
+
+	/**
+	 * Verifies whether Username already exist or not.
+	 * 
+	 * @param user
+	 * @return
+	 * @throws SQLException
+	 */
+	@Transactional
+	public boolean checkUserExist(User user) throws SQLException {
+
+		boolean isUserExist = true;
+		Session session = sessionFactory.getCurrentSession();
+		logger.info("session created.");
+		/* Session session = DBManager.getSessionFactory().openSession(); */
+
+		List<String> userList = new ArrayList<String>();
+		userList = session.createQuery("from User where username ='" + user.getUserName() + "'").list();
+		if (userList.size() != 0) {
+			logger.info("UserName already exists");
+		} else {
+			logger.info("Username is valid.");
+			isUserExist = false;
+		}
+		// session.close();
+		return isUserExist;
+	}
+
+	@Transactional
+	public boolean registerUser(User user, Address address, Profile profile) throws SQLException {
+
+		boolean regStatus = false;
+
+		try {
+
+			// Session session = DBManager.getSessionFactory().openSession();
+
+			Session session = sessionFactory.getCurrentSession();
+			logger.info("Creating Session.");
+			// session.beginTransaction();
+
+			/*
+			 * user.setProfile(profile); profile.setUser(user);
+			 * user.setAddress(address); address.setUser(user);
+			 */
+
+			Store store = user.getStore();
+			user.setStore(store);
+			session.save(user);
+
+			// address.setUser(user);
+			session.save(address);
+			
+			//profile.setUser(user);
+			session.save(profile);
+
+			regStatus = true;
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return regStatus;
+	}
+
+}

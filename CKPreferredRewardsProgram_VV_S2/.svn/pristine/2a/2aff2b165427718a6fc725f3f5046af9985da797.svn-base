@@ -1,0 +1,101 @@
+/**
+ * 
+ */
+
+function validateEmail() {
+	var email = document.getElementById("email")
+	var confirmmail = document.getElementById("txtConfirmEmail")
+	if ((email.value != confirmmail.value) || (confirmmail.value == "")) {
+		confirmmail.style.backgroundColor = "red";
+	} else {
+		confirmmail.style.backgroundColor = "";
+	}
+}
+
+//$(document).ready(function() {
+//	$("#lblTitle1").click(function() {
+//		$("#lblTitle2").hide();
+//		alert("testing");
+//	});
+//
+//});
+//
+//$(document).ready(function() {
+//	$("#lblCont1").click(function() {
+//		$("#lblTitle2").show();
+//		$("#lblTitle2").slideUp(1000).slideDown(1000);
+//	});
+//
+//});
+
+$(document).ready(function() {
+	$("#ddlStorecountries").change(function() {
+		var storeId= $("#ddlStorecountries").val();
+		$.ajax({
+			type : "GET",
+			url : "testing",
+			data : ({
+				name : storeId
+			}),
+			/*contentType : "application/json; charset=utf-8",
+			dataType : "json",*/
+			success : function(msg) {
+				alert(msg);
+				/* $("#lblCont6").val = msg; */
+			},
+			error : function() {
+				alert("Failed to load states");
+			}
+		});
+	});
+
+});
+
+$(document)
+		.ready(
+				function() {
+					$("#lblTitle2")
+							.onclick(
+									function() {
+										alert("testing");
+										$("#lblTitle1").slideUp(1000)
+												.slideDown(1000);
+										alert("testing");
+										$
+												.ajax({
+													type : "POST",
+													url : "Default.aspx/GetGenders",
+													data : "{}",
+													contentType : "application/json; charset=utf-8",
+													dataType : "json",
+													success : function(msg) {
+														$("#ddlStatesProv")
+																.get(0).options.length = 0;
+														$("#ddlStatesProv")
+																.get(0).options[0] = new Option(
+																"Select state",
+																"-1");
+
+														$
+																.each(
+																		msg.d,
+																		function(
+																				index,
+																				item) {
+																			$(
+																					"#ddlStatesProv")
+																					.get(
+																							0).options[$(
+																					"#ddlStatesProv")
+																					.get(
+																							0).options.length] = new Option(
+																					item.Display,
+																					item.Value);
+																		});
+													},
+													error : function() {
+														alert("Failed to load states");
+													}
+												});
+									});
+				});

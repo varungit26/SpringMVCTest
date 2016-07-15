@@ -1,0 +1,83 @@
+package com.ck.rewards.controller;
+
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.ck.rewards.entity.Address;
+import com.ck.rewards.entity.Profile;
+import com.ck.rewards.entity.User;
+import com.ck.rewards.service.RegistrationService;
+
+/**
+ * @author Boot Camp User 14 Handles Registration Process
+ */
+@Controller
+public class RegistrationController {
+
+	@Autowired
+	RegistrationService regService;
+
+	final static Logger logger = Logger.getLogger(RegistrationController.class);
+
+	/**
+	 * Handles User Registration Process by verifying whether username already
+	 * exist or not.
+	 * 
+	 * @param user
+	 * @param address
+	 * @return
+	 */
+	@RequestMapping(value = "/newuser_reg", method = RequestMethod.POST)
+	public ModelAndView register(@ModelAttribute User user, Address address, Profile profile) {
+
+		ModelAndView model = new ModelAndView();
+		String view = null;
+		boolean isUsernameExist = regService.checkUserExist(user);
+		boolean regStatus = false;
+
+		if (isUsernameExist) {
+			logger.warn("UserName already Exist. Please use another username.");
+		} else {
+			logger.warn("UserName is valid.");
+			regStatus = regService.registerUser(user, address, profile);
+			System.out.println(regStatus);
+		}
+
+		if (regStatus) {
+			view = "RegistrationSuccess";
+			model.addObject("username", user.getUserName());
+		} else {
+			view = "Registration";
+			model.addObject("errorMessage", "Username already exist. Please choose another Username");
+		}
+		
+		model.setViewName(view);
+		return model;
+
+	}
+
+	/**
+	 * Controller to redirect to Registration Page.
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/registrationPage")
+	public ModelAndView registration() {
+
+		ModelAndView model = new ModelAndView("Registration");
+
+		HashMap<String, String> storesList = new HashMap<>();
+
+		storesList = regService.getStores("Texas", "USA");
+		model.addObject("storesList", storesList);
+
+		return model;
+	}
+}

@@ -1,0 +1,8 @@
+package com.ck.rewards.dao;
+
+import com.ck.rewards.entity.User;
+
+public interface LoginDAO {
+
+	public boolean verifyUser(User user) throws Exception ;
+}

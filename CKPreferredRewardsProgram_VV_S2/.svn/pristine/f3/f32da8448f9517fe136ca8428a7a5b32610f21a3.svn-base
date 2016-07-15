@@ -1,0 +1,13 @@
+package com.ck.rewards.service;
+
+import com.ck.rewards.entity.User;
+
+/**
+ * Login Service Interface for login validation
+ *
+ */
+public interface LoginService {
+
+	public boolean verifyUser(User user);
+
+}

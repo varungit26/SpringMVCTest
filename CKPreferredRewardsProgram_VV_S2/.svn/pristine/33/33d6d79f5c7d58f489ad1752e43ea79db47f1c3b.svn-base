@@ -1,0 +1,43 @@
+package com.ck.rewards.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.ck.rewards.entity.User;
+
+@Repository
+public class LoginDAOImpl implements LoginDAO {
+
+	final static Logger logger = Logger.getLogger(LoginDAOImpl.class);
+	
+	@Autowired
+	private SessionFactory sessionFactory;
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean verifyUser(User user) throws Exception {
+
+		boolean isUserExist = false;
+		
+		Session session = sessionFactory.openSession();
+		
+		List<String> userList = new ArrayList<String>();
+		userList = session.createQuery("from User where username ='" + user.getUserName() + "' and password ='"
+				+ user.getPassword() + "'").list();
+		if (userList.size() == 0) {
+			logger.info("Wrong Username or Password!");
+		} else {
+			logger.info("UserName exists");
+			isUserExist = true;
+		}
+
+		return isUserExist;
+	}
+
+}
